@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+python-multipart
+google-cloud-aiplatform
+google-cloud-storage
+google-cloud-speech
+google-cloud-bigquery
+elasticsearch
+fivetran-connector-sdk
+python-dotenv
+aiofiles
+pydantic
+httpx
+vertexai

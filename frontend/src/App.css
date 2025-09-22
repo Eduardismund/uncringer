@@ -1,0 +1,38 @@
+.App {
+  text-align: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem;
+}
+
+.upload-box {
+  margin: 2rem auto;
+  max-width: 500px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  border-radius: 10px;
+}
+
+button {
+  background: white;
+  color: #667eea;
+  border: none;
+  padding: 10px 20px;
+  margin: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:disabled {
+  opacity: 0.5;
+}
+
+.result {
+  margin: 2rem auto;
+  max-width: 500px;
+  background: rgba(0, 255, 0, 0.1);
+  padding: 1rem;
+  border-radius: 10px;
+}

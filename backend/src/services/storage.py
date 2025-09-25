@@ -22,22 +22,18 @@ class StorageService:
         try:
             self.bucket = self.client.bucket(self.bucket_name)
             if self.bucket.exists():
-                print(f"Using existing bucket {self.bucket_name}")
+                pass
             else:
                 self.bucket = self.client.create_bucket(
                     self.bucket_name,
                     location="europe-west1"
                 )
-                print(f"Created new bucket {self.bucket_name}")
-        except Exception as e:
-            print(f"Creating bucket: {e}")
+        except Exception:
             try:
                 bucket = storage.Bucket(self.bucket_name)
                 bucket.location = "europe-west1"
                 self.bucket = self.client.create_bucket(bucket)
-                print(f"Created bucket {self.bucket_name}")
-            except Exception as e2:
-                print(f"Failed to create bucket: {e2}")
+            except Exception:
                 self.bucket = self.client.bucket(self.bucket_name)
     
     async def upload_audio(self, file_data: bytes, filename: str) -> dict:

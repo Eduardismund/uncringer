@@ -3,6 +3,9 @@
 .env.*
 !.env.example
 credentials.json
+files
+DEVPOST.md
+config.json
 *.key
 *.pem
 *.p12

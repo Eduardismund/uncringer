@@ -1,0 +1,77 @@
+# Fivetran Connector Configuration
+name: uncringer-discord-direct
+display_name: "Uncringer Discord Direct Connector"
+description: "Fetches Discord audio messages directly and classifies with Vertex AI"
+
+# Connector metadata
+connector:
+  type: custom
+  language: python
+  entry_point: fivetran_connector.py
+  class_name: UncringerConnector
+
+# Configuration schema for Fivetran UI
+configuration_schema:
+  - name: discord_token
+    display_name: "Discord Bot Token"
+    description: "Discord bot token for API access"
+    type: string
+    required: true
+    secret: true
+  
+  - name: discord_server_id
+    display_name: "Discord Server ID"
+    description: "Discord server/guild ID to monitor"
+    type: string
+    required: true
+    default: "1419954564391768166"
+  
+  - name: min_reactions
+    display_name: "Minimum Reactions"
+    description: "Minimum emoji reactions required to process audio"
+    type: integer
+    required: false
+    default: 1
+  
+  - name: lookback_hours
+    display_name: "Lookback Period (hours)"
+    description: "How many hours back to scan for messages"
+    type: integer
+    required: false
+    default: 24
+
+# Sync schedule
+sync:
+  frequency: 15  # minutes
+  incremental: true
+  cursor_field: "last_message_id"
+
+# Destination tables
+tables:
+  discord_audios:
+    primary_key: ["message_id"]
+    description: "Discord audio messages with AI awkwardness classification"
+
+# Performance settings
+performance:
+  batch_size: 50
+  max_retries: 3
+  timeout_minutes: 30
+
+# Monitoring and alerts
+monitoring:
+  health_check: true
+  error_alerts: true
+  success_threshold: 95  # percent
+
+# Required permissions
+permissions:
+  gcp:
+    - "storage.objects.get"
+    - "storage.objects.list"
+    - "aiplatform.models.predict"
+  
+  fivetran:
+    - "connector.read"
+    - "connector.write"
+    - "destination.write"

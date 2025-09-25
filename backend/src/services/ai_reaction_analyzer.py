@@ -78,18 +78,7 @@ class AIReactionAnalyzer:
             return result
             
         except Exception as e:
-            # Log the actual response for debugging
-            print(f"AI Response: {response.text if 'response' in locals() else 'No response'}")
-            print(f"Error: {str(e)}")
-            
-            # Fallback if AI fails
-            return {
-                "cringe_score": 5.0,
-                "confidence": 0.3,
-                "primary_emotion": "unknown",
-                "reasoning": f"AI analysis failed: {str(e)}",
-                "reaction_categories": {"cringe": 0, "positive": 0, "neutral": len(reactions)}
-            }
+            raise Exception(f"AI analysis failed: {str(e)}")
     
     async def create_training_sample(self, audio_data: Dict, reactions: Dict[str, int]) -> Dict:
         """Create AI-analyzed training sample"""

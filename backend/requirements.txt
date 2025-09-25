@@ -12,3 +12,5 @@ aiofiles
 pydantic
 httpx
 vertexai
+discord.py
+aiohttp

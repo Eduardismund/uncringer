@@ -1,0 +1,4 @@
+google_cloud_aiplatform==1.115.0
+vertexai==1.43.0
+discord.py==2.6.3
+protobuf==6.32.1

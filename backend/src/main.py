@@ -3,8 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Dict
 import os
-from services.ai_reaction_analyzer import AIReactionAnalyzer
-from services.storage import StorageService
+from src.services.ai_reaction_analyzer import AIReactionAnalyzer
+from src.services.storage import StorageService
 
 app = FastAPI(title="Uncringer API")
 

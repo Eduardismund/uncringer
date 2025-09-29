@@ -1,22 +1,25 @@
 import discord
 import asyncio
 from datetime import datetime, timezone, timedelta
+from typing import List, Dict
 
 
-class DiscordClient:
-    
+class DiscordConnector:
+
     def __init__(self, token: str, server_id: str):
         self.token = token
         self.server_id = server_id
-        self.audios = []
+        self.audio_messages = []
+        
+        self.audio_extensions = ['.wav', '.mp3', '.ogg', '.m4a', '.webm', '.opus']
     
-    async def fetch_audio_messages(self, after_message_id: str = "0", lookback_hours: int = 24):
+    async def fetch_audio_messages(self, after_message_id: str = "0", lookback_hours: int = 24) -> List[Dict]:
         intents = discord.Intents.default()
         intents.message_content = True
         intents.reactions = True
         
         client = discord.Client(intents=intents)
-        self.audios = []
+        self.audio_messages = []
         
         @client.event
         async def on_ready():
@@ -35,28 +38,30 @@ class DiscordClient:
                         
                         audio_data = self._extract_audio_data(message)
                         if audio_data:
-                            self.audios.extend(audio_data)
+                            self.audio_messages.extend(audio_data)
                             
-                except:
-                    pass
+                except discord.errors.Forbidden:
+                    continue
+                except Exception:
+                    continue
             
             await client.close()
         
         await client.start(self.token)
-        return sorted(self.audios, key=lambda x: x["message_id"])
+        return sorted(self.audio_messages, key=lambda x: x["message_id"])
     
-    def _extract_audio_data(self, message):
-        audio_extensions = ['.mp3', '.wav', '.ogg', '.m4a', '.webm', '.opus']
+    def _extract_audio_data(self, message: discord.Message) -> List[Dict]:
         audio_list = []
         
         for attachment in message.attachments:
-            if any(attachment.filename.lower().endswith(ext) for ext in audio_extensions):
-                reactions = self._get_reactions(message)
+            if self._is_audio_file(attachment.filename):
+                reactions = self._extract_reactions(message)
                 
                 audio_list.append({
                     "message_id": str(message.id),
                     "author": str(message.author),
                     "channel_id": str(message.channel.id),
+                    "channel_name": message.channel.name,
                     "filename": attachment.filename,
                     "audio_url": attachment.url,
                     "reactions": reactions,
@@ -66,7 +71,10 @@ class DiscordClient:
         
         return audio_list
     
-    def _get_reactions(self, message):
+    def _is_audio_file(self, filename: str) -> bool:
+        return any(filename.lower().endswith(ext) for ext in self.audio_extensions)
+    
+    def _extract_reactions(self, message: discord.Message) -> Dict[str, int]:
         reactions = {}
         for reaction in message.reactions:
             reactions[str(reaction.emoji)] = reaction.count

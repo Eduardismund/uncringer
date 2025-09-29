@@ -1,7 +1,0 @@
-{
-  "discord_token": "YOUR_DISCORD_BOT_TOKEN_HERE",
-  "discord_server_id": "YOUR_DISCORD_SERVER_ID_HERE",
-  "min_reactions": "1",
-  "lookback_hours": "24",
-  "google_service_account_key": "YOUR_SERVICE_ACCOUNT_JSON_STRING_HERE"
-}

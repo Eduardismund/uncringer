@@ -5,6 +5,7 @@
 credentials.json
 files
 DEVPOST.md
+run.md
 config.json
 *.key
 *.pem
@@ -172,7 +173,7 @@ data/classifications/*
 *.joblib
 *.model
 *.h5
-models/
+ml_models/
 checkpoints/
 
 # Temporary files

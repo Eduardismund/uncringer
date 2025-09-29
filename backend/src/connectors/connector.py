@@ -1,9 +1,9 @@
-import sys
-import os
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
 from fivetran_connector_sdk import Connector
-from fivetran_connector import UncringerConnector
+from uncringer_fivetran import UncringerFivetranConnector
 
-uncringer = UncringerConnector()
-connector = Connector(update=uncringer.update, schema=uncringer.schema)
+connector_instance = UncringerFivetranConnector()
+
+connector = Connector(
+    update=connector_instance.update,
+    schema=connector_instance.schema
+)

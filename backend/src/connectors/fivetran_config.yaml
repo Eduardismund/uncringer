@@ -7,8 +7,8 @@ description: "Fetches Discord audio messages directly and classifies with Vertex
 connector:
   type: custom
   language: python
-  entry_point: fivetran_connector.py
-  class_name: UncringerConnector
+  entry_point: uncringer_fivetran.py
+  class_name: UncringerFivetranConnector
 
 # Configuration schema for Fivetran UI
 configuration_schema:
@@ -24,7 +24,6 @@ configuration_schema:
     description: "Discord server/guild ID to monitor"
     type: string
     required: true
-    default: "1419954564391768166"
   
   - name: min_reactions
     display_name: "Minimum Reactions"
@@ -39,6 +38,13 @@ configuration_schema:
     type: integer
     required: false
     default: 24
+  
+  - name: google_service_account_key
+    display_name: "Google Service Account Key"
+    description: "JSON key for Google Cloud authentication"
+    type: string
+    required: true
+    secret: true
 
 # Sync schedule
 sync:
@@ -51,6 +57,10 @@ tables:
   discord_audios:
     primary_key: ["message_id"]
     description: "Discord audio messages with AI awkwardness classification"
+  
+  audio_features:
+    primary_key: ["message_id"]
+    description: "Audio feature analysis from Cloud Run service"
 
 # Performance settings
 performance:

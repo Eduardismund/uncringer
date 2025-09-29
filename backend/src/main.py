@@ -1,52 +1,44 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import Dict
-import os
-from src.services.ai_reaction_analyzer import AIReactionAnalyzer
-from src.services.storage import StorageService
+from src.config import Config
+from src.api.handlers import AudioAnalysisHandler
+from src.models.requests import PredictionRequest
+from src.models.responses import PredictionResponse, HealthResponse
 
-app = FastAPI(title="Uncringer API")
+# Initialize FastAPI app
+app = FastAPI(
+    title="Uncringer API",
+    description="AI-powered audio cringe detection using BigQuery ML",
+    version="1.0.0"
+)
 
+# Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=Config.CORS_ORIGINS,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Initialize services
-ai_analyzer = AIReactionAnalyzer()
-storage_service = StorageService()
+# Initialize handlers
+audio_handler = AudioAnalysisHandler()
 
-class ReactionAnalysisRequest(BaseModel):
-    reactions: Dict[str, int]
-    context: str = ""
-
-@app.get("/")
+@app.get("/", response_model=HealthResponse)
 async def root():
-    return {"message": "Uncringer API is running!"}
+    """Root endpoint"""
+    return HealthResponse(status="ok", message="Uncringer API is running!")
 
-@app.post("/api/analyze-reactions")
-async def analyze_reactions(request: ReactionAnalysisRequest):
-    """Test endpoint for AI reaction analysis"""
-    analysis = await ai_analyzer.analyze_reactions(request.reactions, request.context)
-    return analysis
+@app.post("/api/analyze", response_model=PredictionResponse)
+async def analyze_audio(file: UploadFile = File(...)):
+    """Analyze uploaded audio file for cringe detection"""
+    return await audio_handler.analyze_audio(file)
 
-@app.post("/api/upload")
-async def upload_audio(file: UploadFile = File(...)):
-    """Upload audio file to Cloud Storage"""
-    
-    file_data = await file.read()
-    
-    result = await storage_service.upload_audio(file_data, file.filename)
-    
-    return {
-        "message": "Audio uploaded successfully",
-        "file_id": result["file_id"],
-        "gcs_url": result["gcs_url"]
-    }
+@app.post("/api/predict", response_model=PredictionResponse)
+async def predict_audio(request: PredictionRequest):
+    """Predict cringe level from audio URL"""
+    return await audio_handler.predict_from_url(request)
 
-@app.get("/health")
+@app.get("/health", response_model=HealthResponse)
 async def health():
-    return {"status": "ok"}
+    """Health check endpoint"""
+    return HealthResponse(status="healthy")
